@@ -16,4 +16,440 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            background-color: #f4f4f9;
+        }
         
+        .card {
+            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            max-width: 420px;
+            width: 90%;
+            margin: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 24px;
+        }
+
+        p.tagline {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* Styling for your uploaded Zebra EM45 RFID Image */
+        .device-image {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px auto 20px auto;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .device-image:hover {
+            transform: scale(1.03);
+        }
+
+        .specs-list {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        .specs-list strong {
+            color: #2c3e50;
+        }
+
+        /* Video Stream Display */
+        .video-container {
+            width: 100%;
+            height: 220px;
+            background-color: #2c3e50;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .placeholder-text {
+            color: #ecf0f1;
+            font-size: 14px;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .control-panel .btn {
+            margin-bottom: 0;
+        }
+
+        .btn-primary { background-color: #2c3e50; color: white; }
+        .btn-primary:hover { background-color: #1a252f; }
+        
+        .btn-accent { background-color: #f26522; color: white; }
+        .btn-accent:hover { background-color: #d84f10; }
+        
+        .btn-danger { background-color: #e74c3c; color: white; }
+        .btn-danger:hover { background-color: #c0392b; }
+        
+        .btn-disabled { background-color: #bdc3c7; color: #7f8c8d; cursor: not-allowed; }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #2c3e50;
+            color: #2c3e50;
+        }
+        .btn-outline:hover { background-color: #f8f9fa; }
+
+        /* Top Navigation Bar */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .btn-back {
+            background-color: #f4f4f9;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: #e2e4eb;
+        }
+
+        .nav-bar h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #2ecc71;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+            z-index: 10;
+        }
+
+        .status-recording {
+            color: #e74c3c;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: MAIN HOME SCREEN                   -->
+    <!-- ========================================== -->
+    <div class="card" id="homeView">
+        
+        <!-- Zebra EM45 RFID Image File Reference -->
+        <img src="EM45 RFID.jpg" alt="Zebra EM45 RFID Mobile Computer" class="device-image" onerror="this.style.display='none';">
+
+        <h1>Hello from Zebra EM45</h1>
+        <p class="tagline">Built for Work. Designed for You.</p>
+
+        <!-- Specs List -->
+        <div class="specs-list">
+            <strong>Key Specifications:</strong>
+            <div style="margin-top: 8px;">
+                📱 <strong>Display:</strong> 6.7 in. Full HD+ (120Hz)<br>
+                🔋 <strong>Battery:</strong> 4,750 mAh (Up to 25 Hours)<br>
+                📶 <strong>Connectivity:</strong> 5G & Wi-Fi 6E Wireless<br>
+                📸 <strong>Camera:</strong> 50MP Rear HDR Lens with OIS<br>
+                🧠 <strong>On-Device AI:</strong> Qualcomm 5730 with dedicated AI engine & NPU
+            </div>
+        </div>
+
+        <!-- Utility Link and Specs Page Link -->
+        <button class="btn btn-primary" onclick="switchView('cameraView')">📷 Open Camera Utilities</button>
+        
+        <a href="https://www.zebra.com/us/en/products/mobile-computers/handheld/em45-series.html" 
+           target="_blank" 
+           class="btn btn-outline">
+           Explore Zebra EM45 Specs
+        </a>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: CAMERA & UTILITIES SCREEN          -->
+    <!-- ========================================== -->
+    <div class="card" id="cameraView" style="display: none;">
+        
+        <div class="nav-bar">
+            <!-- Updated view header name -->
+            <h2>Camera Utilities</h2>
+            <button class="btn-back" onclick="switchView('homeView')">Return to Home</button>
+        </div>
+
+        <div class="video-container">
+            <div id="statusBadge" class="status-badge">● LIVE</div>
+            <div id="placeholderText" class="placeholder-text">Camera Feed Offline<br><span style="font-size: 11px; opacity:0.8;">Tap "Start Camera" below to request access.</span></div>
+            <video id="preview" autoplay playsinline muted></video>
+        </div>
+
+        <div class="control-panel">
+            <button id="cameraBtn" class="btn btn-primary" onclick="toggleCamera()">🎥 Start Camera</button>
+            <button id="torchBtn" class="btn btn-disabled" onclick="toggleFlashlight()" disabled>🔦 Torch Off</button>
+        </div>
+        
+        <button id="recordBtn" class="btn btn-disabled" onclick="toggleRecord()" disabled style="width: 100%;">🔴 Record Video</button>
+    </div>
+
+    <script>
+        // View Switching Logic
+        function switchView(viewId) {
+            document.getElementById('homeView').style.display = 'none';
+            document.getElementById('cameraView').style.display = 'none';
+            document.getElementById(viewId).style.display = 'block';
+
+            // Turning off camera hardware when returning home prevents resource locking
+            if (viewId === 'homeView') {
+                stopCamera();
+            }
+        }
+
+        // Hardware Controls variables
+        let stream = null;
+        let track = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let flashlightOn = false;
+
+        const preview = document.getElementById('preview');
+        const placeholderText = document.getElementById('placeholderText');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const torchBtn = document.getElementById('torchBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const statusBadge = document.getElementById('statusBadge');
+
+        async function toggleCamera() {
+            if (stream) {
+                stopCamera();
+                return;
+            }
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" },
+                    audio: true
+                });
+            } catch (err) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                } catch (fallbackErr) {
+                    alert('Camera Access Denied: Please check permission settings.');
+                    return;
+                }
+            }
+
+            preview.srcObject = stream;
+            preview.style.display = "block";
+            placeholderText.style.display = "none";
+            track = stream.getVideoTracks()[0];
+            
+            cameraBtn.innerText = "⏹ Stop Camera";
+            cameraBtn.className = "btn btn-danger";
+            recordBtn.className = "btn btn-primary";
+            recordBtn.removeAttribute('disabled');
+            statusBadge.style.display = "block";
+            statusBadge.className = "status-badge";
+            statusBadge.innerText = "● LIVE";
+
+            try {
+                const capabilities = track.getCapabilities();
+                if (capabilities.torch) {
+                    torchBtn.className = "btn btn-primary";
+                    torchBtn.removeAttribute('disabled');
+                } else {
+                    torchBtn.innerText = "🔦 No Torch";
+                    torchBtn.className = "btn btn-disabled";
+                }
+            } catch(e) {
+                torchBtn.className = "btn btn-primary";
+                torchBtn.removeAttribute('disabled');
+            }
+        }
+
+        function stopCamera() {
+            if (flashlightOn) {
+                toggleFlashlight();
+            }
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                track = null;
+            }
+            preview.srcObject = null;
+            preview.style.display = "none";
+            placeholderText.style.display = "block";
+
+            cameraBtn.innerText = "🎥 Start Camera";
+            cameraBtn.className = "btn btn-primary";
+            
+            torchBtn.className = "btn btn-disabled";
+            torchBtn.setAttribute('disabled', 'true');
+            torchBtn.innerText = "🔦 Torch Off";
+            torchBtn.style.backgroundColor = "";
+            torchBtn.style.color = "";
+            flashlightOn = false;
+
+            recordBtn.className = "btn btn-disabled";
+            recordBtn.setAttribute('disabled', 'true');
+            recordBtn.innerText = "🔴 Record Video";
+            isRecording = false;
+
+            statusBadge.style.display = "none";
+        }
+
+        async function toggleFlashlight() {
+            if (!track) return;
+            try {
+                flashlightOn = !flashlightOn;
+                await track.applyConstraints({ advanced: [{ torch: flashlightOn }] });
+                
+                if (flashlightOn) {
+                    torchBtn.innerText = "🔦 Torch On";
+                    torchBtn.style.backgroundColor = "#f1c40f"; 
+                    torchBtn.style.color = "#000";
+                } else {
+                    torchBtn.innerText = "🔦 Torch Off";
+                    torchBtn.style.backgroundColor = "#2c3e50";
+                    torchBtn.style.color = "white";
+                }
+            } catch (err) {
+                alert("This browser/device combination couldn't switch the physical flashlight. Opening the camera feed normally works!");
+            }
+        }
+
+        function toggleRecord() {
+            if (!stream) return;
+
+            if (isRecording) {
+                mediaRecorder.stop();
+                recordBtn.innerText = "🔴 Record Video";
+                recordBtn.className = "btn btn-primary";
+                statusBadge.className = "status-badge";
+                statusBadge.innerText = "● LIVE";
+                isRecording = false;
+            } else {
+                recordedChunks = [];
+                try {
+                    mediaRecorder = new MediaRecorder(stream);
+                } catch(e) {
+                    alert("This browser doesn't support local video recording encoding formats.");
+                    return;
+                }
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) recordedChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `EM45_Video_${Date.now()}.webm`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                };
+
+                mediaRecorder.start();
+                recordBtn.innerText = "⏹ Stop Recording";
+                recordBtn.className = "btn btn-danger";
+                statusBadge.className = "status-badge status-recording";
+                statusBadge.innerText = "● REC";
+                isRecording = true;
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .catch(err => console.log('SW registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
