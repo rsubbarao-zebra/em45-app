@@ -29,6 +29,7 @@
             max-width: 420px;
             width: 90%;
             margin: 20px;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -44,22 +45,56 @@
             margin-bottom: 15px;
         }
 
-        /* Video Preview Screen styling */
+        /* Hotlink-safe device silhouette illustration styling */
+        .device-illustration {
+            width: 140px;
+            height: auto;
+            margin: 10px auto 20px auto;
+            display: block;
+        }
+
+        .specs-list {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        .specs-list strong {
+            color: #2c3e50;
+        }
+
+        /* Optimized video stream display */
         .video-container {
             width: 100%;
-            height: 220px;
-            background-color: #000;
+            height: 200px;
+            background-color: #2c3e50;
             border-radius: 10px;
             margin-bottom: 15px;
             overflow: hidden;
             position: relative;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: none; /* Hidden until stream is active */
+        }
+
+        .placeholder-text {
+            color: #ecf0f1;
+            font-size: 14px;
+            padding: 20px;
+            line-height: 1.4;
         }
 
         /* Control Panel Buttons */
@@ -112,7 +147,7 @@
             cursor: not-allowed;
         }
 
-        /* Status Indicator Overlay */
+        /* Live status badge */
         .status-badge {
             position: absolute;
             top: 10px;
@@ -124,6 +159,7 @@
             font-size: 11px;
             font-weight: bold;
             display: none;
+            z-index: 10;
         }
 
         .status-recording {
@@ -134,18 +170,57 @@
         @keyframes blink {
             50% { opacity: 0; }
         }
+
+        /* Debug Logger */
+        #debugLog {
+            background-color: #111;
+            color: #2ecc71;
+            font-family: monospace;
+            font-size: 11px;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: left;
+            max-height: 80px;
+            overflow-y: auto;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1>Zebra EM45 Utilities</h1>
-        <p class="tagline">Camera & Hardware Controller</p>
+        <!-- SVG Device Illustration of Zebra Mobile Computer -->
+        <svg class="device-illustration" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="80" height="180" rx="12" fill="#2c3e50" stroke="#f26522" stroke-width="4"/>
+            <!-- Top Speaker Bar -->
+            <rect x="40" y="20" width="20" height="4" rx="2" fill="#bdc3c7"/>
+            <!-- Screen Area -->
+            <rect x="16" y="32" width="68" height="136" rx="6" fill="#f4f4f9"/>
+            <!-- Scanner yellow glow indicator -->
+            <polygon points="30,10 70,10 65,4 35,4" fill="#f1c40f"/>
+            <!-- Inner screen text -->
+            <text x="50" y="105" font-family="Arial" font-size="8" fill="#7f8c8d" text-anchor="middle" font-weight="bold">ZEBRA EM45</text>
+        </svg>
 
-        <!-- Camera Viewport container -->
+        <h1>Hello from Zebra EM45</h1>
+        <p class="tagline">Built for Work. Designed for You.</p>
+
+        <!-- Specifications Summary -->
+        <div class="specs-list">
+            <strong>Key Specifications:</strong>
+            <div style="margin-top: 8px;">
+                📱 <strong>Display:</strong> 6.7 in. [...](asc_slot://start-slot-1)Full HD+ (120Hz)<br>
+                🔋 <strong>Battery:</strong> 4,750 mAh (Up to 25 Hours)<br>
+                📶 <strong>Connectivity:</strong> 5G & Wi-Fi 6E Wireless<br>
+                📸 <strong>Camera:</strong> 50MP Rear HDR Lens with OIS
+            </div>
+        </div>
+
+        <!-- Camera Viewport Frame -->
         <div class="video-container">
             <div id="statusBadge" class="status-badge">● LIVE</div>
-            <!-- Standard Video tag to stream camera feed -->
+            <div id="placeholderText" class="placeholder-text">Camera Feed Offline<br><span style="font-size: 11px; opacity:0.8;">Tap "Start Camera" below to request access.</span></div>
             <video id="preview" autoplay playsinline muted></video>
         </div>
 
@@ -156,13 +231,16 @@
             <button id="recordBtn" class="btn btn-disabled" onclick="toggleRecord()" disabled>🔴 Record Video</button>
         </div>
 
-        <!-- Official Product Page Link Button -->
+        <! [...](asc_slot://start-slot-3)-- Official Product Page Link Button -->
         <a href="https://www.zebra.com/us/en/products/mobile-computers/handheld/em45-series.html" 
            target="_blank" 
            class="btn btn-accent" 
            style="text-decoration: none; width: 100%; box-sizing: border-box; text-align: center;">
            Explore Zebra EM45 Specs
         </a>
+
+        <!-- Debug logger console -->
+        <div id="debugLog"></div>
     </div>
 
     <script>
@@ -174,41 +252,57 @@
         let flashlightOn = false;
 
         const preview = document.getElementById('preview');
+        const placeholderText = document.getElementById('placeholderText');
         const cameraBtn = document.getElementById('cameraBtn');
         const torchBtn = document.getElementById('torchBtn');
         const recordBtn = document.getElementById('recordBtn');
         const statusBadge = document.getElementById('statusBadge');
+        const debugLog = document.getElementById('debugLog');
 
-        // 1. Starts or Stops the Device Camera stream
+        function log(message) {
+            debugLog.style.display = "block";
+            debugLog.innerHTML += message + "<br>";
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+
+        // 1. Starts/Stops the camera stream
         async function toggleCamera() {
             if (stream) {
                 stopCamera();
                 return;
             }
 
+            log("Requesting camera access...");
             try {
-                // Request back-facing camera to support flashlight
+                // Request back-facing camera to support torch operations
                 stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: { exact: 'environment' } },
+                    video: { facingMode: "environment" },
                     audio: true
                 });
+                log("Camera stream obtained.");
             } catch (err) {
-                // Fallback to any camera if strict environment/rear camera fails
+                log("FacingMode environment failed: " + err.message);
                 try {
+                    // General fallback to any camera available
                     stream = await navigator.mediaDevices.getUserMedia({
                         video: true,
                         audio: true
                     });
+                    log("Fallback camera stream obtained.");
                 } catch (fallbackErr) {
+                    log("All camera stream requests failed: " + fallbackErr.message);
                     alert('Could not access device camera: ' + fallbackErr.message);
                     return;
                 }
             }
 
             preview.srcObject = stream;
+            preview.style.display = "block";
+            placeholderText.style.display = "none";
+            
             track = stream.getVideoTracks()[0];
             
-            // Adjust Button states
+            // Adjust button configurations
             cameraBtn.innerText = "⏹ Stop Camera";
             cameraBtn.className = "btn btn-danger";
             recordBtn.className = "btn btn-primary";
@@ -217,19 +311,30 @@
             statusBadge.className = "status-badge";
             statusBadge.innerText = "● LIVE";
 
-            // Check if the hardware support flashlight (torch)
-            const capabilities = track.getCapabilities();
-            if (capabilities.torch) {
+            // Check if flashlight/torch hardware exists
+            try {
+                const capabilities = track.getCapabilities();
+                log("Hardware capabilities loaded.");
+                if (capabilities.torch) {
+                    log("Flashlight hardware found!");
+                    torchBtn.className = "btn btn-primary";
+                    torchBtn.removeAttribute('disabled');
+                } else {
+                    log("Torch capability not reported by this browser/camera.");
+                    torchBtn.innerText = "🔦 No Torch";
+                    torchBtn.className = "btn btn-disabled";
+                }
+            } catch(e) {
+                log("Capabilities reading not supported: " + e.message);
+                // Try activating anyway
                 torchBtn.className = "btn btn-primary";
                 torchBtn.removeAttribute('disabled');
-            } else {
-                torchBtn.innerText = "🔦 No Torch";
-                torchBtn.className = "btn btn-disabled";
             }
         }
 
         function stopCamera() {
-            if (flashlightOn) toggleFlashlight(); // Ensure torch is turned off
+            log("Stopping camera stream...");
+            if (flashlightOn) toggleFlashlight();
             
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
@@ -237,14 +342,18 @@
                 track = null;
             }
             preview.srcObject = null;
+            preview.style.display = "none";
+            placeholderText.style.display = "block";
 
-            // Reset Button states
+            // Reset buttons
             cameraBtn.innerText = "🎥 Start Camera";
             cameraBtn.className = "btn btn-primary";
             
             torchBtn.className = "btn btn-disabled";
             torchBtn.setAttribute('disabled', 'true');
             torchBtn.innerText = "🔦 Torch Off";
+            torchBtn.style.backgroundColor = "";
+            torchBtn.style.color = "";
             flashlightOn = false;
 
             recordBtn.className = "btn btn-disabled";
@@ -253,34 +362,41 @@
             isRecording = false;
 
             statusBadge.style.display = "none";
+            log("Camera stream stopped.");
         }
 
-        // 2. Controls the LED Flashlight (Torch)
+        // 2. Controls hardware LED flashlight
         async function toggleFlashlight() {
-            if (!track) return;
+            if (!track) {
+                log("No active camera track found for flashlight.");
+                return;
+            }
 
             try {
                 flashlightOn = !flashlightOn;
+                log("Setting torch setting: " + flashlightOn);
                 await track.applyConstraints({
                     advanced: [{ torch: flashlightOn }]
                 });
                 
                 if (flashlightOn) {
                     torchBtn.innerText = "🔦 Torch On";
-                    torchBtn.style.backgroundColor = "#f1c40f"; // Gold/Yellow
+                    torchBtn.style.backgroundColor = "#f1c40f"; 
                     torchBtn.style.color = "#000";
+                    log("Torch ON success.");
                 } else {
                     torchBtn.innerText = "🔦 Torch Off";
                     torchBtn.style.backgroundColor = "#2c3e50";
                     torchBtn.style.color = "white";
+                    log("Torch OFF success.");
                 }
             } catch (err) {
-                console.error("Flashlight control failed:", err);
+                log("Torch error: " + err.message);
                 alert("Flashlight failed to trigger: " + err.message);
             }
         }
 
-        // 3. Records video clips and saves them to your files
+        // 3. Handles high-definition video recordings
         function toggleRecord() {
             if (!stream) return;
 
@@ -293,8 +409,57 @@
                 isRecording = false;
             } else {
                 recordedChunks = [];
-                mediaRecorder = new MediaRecorder(stream);
+                try {
+                    mediaRecorder = new MediaRecorder(stream);
+                    log("MediaRecorder initialized.");
+                } catch(e) {
+                    log("MediaRecorder init failed: " + e.message);
+                    return;
+                }
                 
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    log("Compiling recorded video...");
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `EM45_Video_${Date.now()}.webm`;
+                    document.body.appendChild(a);
+                    a.click();
+                    log("Download triggered.");
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                };
+
+                mediaRecorder.start();
+                recordBtn.innerText = "⏹ Stop Recording";
+                recordBtn.className = "btn btn-danger";
+                statusBadge.className = "status-badge status-recording";
+                statusBadge.innerText = "● REC";
+                isRecording = true;
+                log("Video recording started.");
+            }
+        }
+
+        // Register the Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered successfully!', reg))
+                    .catch(err => console.log('Service Worker registration failed: ', err));
+            });
+        }
+    </script>
+</body>
+</html>
