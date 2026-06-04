@@ -7,7 +7,7 @@
     
     <!-- Link to the Web App Manifest -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2c3e50">
+    <meta name="theme-color" content="#3c3e50">
 
     <style>
         body {
@@ -15,23 +15,118 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             background-color: #f4f4f9;
         }
+        
+        .card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+            margin: 20px;
+        }
+
         h1 {
             color: #2c3e50;
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 5px;
+            font-size: 24px;
+        }
+
+        p.tagline {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Zebra EM45 Product Image Styling */
+        .device-image {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .device-image:hover {
+            transform: scale(1.05);
+        }
+
+        .specs-list {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        .specs-list strong {
+            color: #2c3e50;
+        }
+
+        /* Call-to-Action Link Button Styling */
+        .btn-link {
+            display: inline-block;
+            background-color: #f26522; /* Zebra Brand Orange Accent */
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(242, 101, 34, 0.2);
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-link:hover {
+            background-color: #d84f10;
+            box-shadow: 0 6px 12px rgba(242, 101, 34, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-link:active {
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
 
-    <h1>Hello from Zebra EM45</h1>
+    <div class="card">
+        <!-- Zebra EM45 Image -->
+        <img src="https://www.zebra.com/content/dam/zebra_dam/global/zcom-web-production/photography/product-hardware/mobile-computers/handheld-computers/em45-series-p1091560-right-facing-angled-on-white.png" 
+             alt="Zebra EM45 Enterprise Mobile" 
+             class="device-image">
+
+        <h1>Hello from Zebra EM45</h1>
+        <p class="tagline">Built for Work. Designed for You.</p>
+
+        <!-- Specifications Summary -->
+        <div class="specs-list">
+            <strong>Key Specifications:</strong>
+            <div style="margin-top: 8px;">
+                📱 <strong>Display:</strong> 6.7 in. Full HD+ (120Hz)<br>
+                🔋 <strong>Battery:</strong> 4,750 mAh (Up to 25 Hours)<br>
+                📶 <strong>Connectivity:</strong> 5G & Wi-Fi 6E Wireless<br>
+                📸 <strong>Camera:</strong> 50MP HDR Rear Camera
+            </div>
+        </div>
+
+        <!-- Official Product Page Link Button -->
+        <a href="https://www.zebra.com/us/en/products/mobile-computers/handheld/em45-series.html" 
+           target="_blank" 
+           class="btn-link">
+           Explore Zebra EM45
+        </a>
+    </div>
 
     <script>
         // Register the Service Worker to enable offline support and PWA features
