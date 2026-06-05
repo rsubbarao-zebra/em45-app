@@ -1,8 +1,11 @@
-const CACHE_NAME = 'em45-app-v1';
+// Incremented to v5 to force the browser to discard the old crashed cache
+const CACHE_NAME = 'em45-app-v5'; 
+
 const ASSETS = [
   './index.html',
   './manifest.json',
-  './sw.js'
+  './sw.js',
+  './EM45-RFID.jpg' // Updated filename with hyphen
 ];
 
 // Install Service Worker and cache assets
@@ -12,6 +15,23 @@ self.addEventListener('install', (e) => {
       return cache.addAll(ASSETS);
     })
   );
+  self.skipWaiting();
+});
+
+// Clean up old caches (clears the blank screen locks)
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+  return self.clients.claim();
 });
 
 // Serve cached content when offline
