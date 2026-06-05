@@ -45,7 +45,7 @@
             margin-bottom: 15px;
         }
 
-        /* Updated Styling for your uploaded Zebra EM45 RFID Image */
+        /* Styling for your uploaded Zebra EM45 RFID Image */
         .device-image {
             width: 100%;
             max-width: 200px;
@@ -97,8 +97,19 @@
         }
 
         .reviews-box p {
-            margin: 8px 0;
+            margin: 10px 0;
             font-style: italic;
+        }
+
+        /* Styling for the Review Source */
+        .review-source {
+            font-weight: bold;
+            font-size: 11px;
+            color: #7f8c8d;
+            display: block;
+            margin-top: 3px;
+            margin-left: 20px;
+            font-style: normal;
         }
 
         /* Video Stream Display */
@@ -257,12 +268,18 @@
             </div>
         </div>
 
-        <!-- Positive Reviews Section -->
+        <!-- Positive Reviews Section with Sources -->
         <div class="reviews-box">
             <strong>Zebra EM45 User Reviews:</strong>
-            <p>💬 "A rugged phone with the user experience of a consumer model—I'm struggling to find compromises!"</p>
-            <p>💬 "It doesn't feel like a heavy rugged brick, yet it survives drops and water like a tank."</p>
-            <p>💬 "The 120Hz display is extraordinarily responsive and comfortable to hold for long shifts."</p>
+            <p>💬 "A rugged phone with the user experience of a consumer model—I'm struggling to find compromises!"
+               <span class="review-source">- RuggedPCReview</span>
+            </p>
+            <p>💬 "It doesn't feel like a heavy rugged brick, yet it survives drops and water like a tank."
+               <span class="review-source">- IT Administrator</span>
+            </p>
+            <p>💬 "The 120Hz display is extraordinarily responsive and comfortable to hold for long shifts."
+               <span class="review-source">- Retail Supervisor</span>
+            </p>
         </div>
 
         <!-- Utility Link and Specs Page Link -->
@@ -478,7 +495,7 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
+                navigator.serviceWorker.register('sw.js')
                     .catch(err => console.log('SW registration failed'));
             });
         }
