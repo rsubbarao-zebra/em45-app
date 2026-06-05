@@ -1,18 +1,18 @@
-// Incremented cache to v7 to force-overwrite any previously crashed/stuck installations
-const CACHE_NAME = 'em45-app-v7';
+// Incremented to v8 to forcefully clear any old locked-up caches
+const CACHE_NAME = 'em45-app-v8';
 
+// Use relative paths specifically formatted for GitHub Pages subdirectories
 const ASSETS = [
-  './index.html',
-  './manifest.json',
-  './sw.js',
-  './EM45-RFID.jpg'
+  'index.html',
+  'manifest.json',
+  'EM45-RFID.jpg'
 ];
 
-// Universal ES6 Safe Pre-Caching (Works on ALL older/enterprise Android WebViews)
+// Installs the Service Worker using a non-blocking cache loop
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // Traditional Promise.all mapping that safely swallows 404s individually
+      // Loop through assets individually so a single fail never crashes the app
       return Promise.all(
         ASSETS.map((asset) => {
           return cache.add(asset).catch((err) => {
@@ -25,7 +25,7 @@ self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
-// Clean up old caches
+// Clears out any bad or old cached versions that caused the blank screen
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -41,11 +41,27 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
-// Serve cached content when offline
+// NETWORK-FIRST Strategy: Always request the fresh page from the internet first.
+// If you are completely offline (e.g. out of service), fall back to the saved cache.
 self.addEventListener('fetch', (e) => {
+  // Only handle standard HTTP/HTTPS requests (ignores internal chrome-extension fetches)
+  if (!e.request.url.startsWith('http')) return;
+
   e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
-    })
+    fetch(e.request)
+      .then((response) => {
+        // If the request succeeds, save a fresh copy to the cache
+        if (response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, responseClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // If offline or request fails, load instantly from local cache
+        return caches.match(e.request);
+      })
   );
 });
