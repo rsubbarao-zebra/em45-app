@@ -1,23 +1,22 @@
-// Incremented cache name to force the browser to update
-const CACHE_NAME = 'em45-app-v6';
+// Incremented cache to v7 to force-overwrite any previously crashed/stuck installations
+const CACHE_NAME = 'em45-app-v7';
 
-// The exact, case-sensitive list of files to cache
 const ASSETS = [
   './index.html',
   './manifest.json',
   './sw.js',
-  './EM45-RFID.jpg' // Updated to the correct, hyphenated file name
+  './EM45-RFID.jpg'
 ];
 
-// Install Service Worker and cache assets
+// Universal ES6 Safe Pre-Caching (Works on ALL older/enterprise Android WebViews)
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // If a file is missing (like a 404), don't crash the whole install
-      return Promise.allSettled(
-        ASSETS.map(asset => {
-          return cache.add(asset).catch(err => {
-            console.error('Failed to cache asset:', asset, err);
+      // Traditional Promise.all mapping that safely swallows 404s individually
+      return Promise.all(
+        ASSETS.map((asset) => {
+          return cache.add(asset).catch((err) => {
+            console.warn('Non-fatal pre-cache skip:', asset, err);
           });
         })
       );
@@ -26,7 +25,7 @@ self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
-// Clean up old caches (clears the blank screen locks)
+// Clean up old caches
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
